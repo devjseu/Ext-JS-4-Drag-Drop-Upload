@@ -120,8 +120,6 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
     listeners: {
     },
     constructor: function (cfg) {
-        window.test = window.test || [];
-        window.test.push(this);
         var me = this;
         me.addEvents({
             /**
@@ -154,6 +152,15 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
             'success': true,
             /**
              * @event
+             * @param formData
+             * @param record
+             *
+             * Fires when upload process start.
+             *
+             */
+            'beforeupload': true,
+            /**
+             * @event
              * @param status
              * @param event
              * @param record
@@ -161,7 +168,7 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
              * Fired whatever file was uploaded or error occurred.
              *
              */
-            'uploadend': true
+            'afterupload': true
         });
         me.initConfig(cfg);
         if (typeof me.config.url === 'undefined') {

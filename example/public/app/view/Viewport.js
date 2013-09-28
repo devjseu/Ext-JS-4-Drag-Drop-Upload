@@ -14,7 +14,6 @@ Ext.define('MyApp.view.Viewport', {
     layout: {
         type: 'border'
     },
-
     items: [
         {
             region: 'west',
@@ -77,6 +76,7 @@ Ext.define('MyApp.view.Viewport', {
                                 'image/png': true,
                                 'video/avi': true
                             },
+                            autoUpload : false,
                             listeners: {
                                 ddinit: function (dd) {
                                     var el = this,

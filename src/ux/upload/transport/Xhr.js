@@ -15,8 +15,12 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
         xhr.open(method, url, true);
 
         this.abortXhr = function () {
-            xhr.abort();
+            console.log(xhr);
+            xhr && xhr.abort();
         };
+        this.clearXhr = function () {
+            xhr = null;
+        }
 
         return xhr;
     },
@@ -43,19 +47,25 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
             if (response.status != 200) {
                 me.fireEvent('failure', event, item);
             } else {
-                json = Ext.JSON.decode(response.responseText);
+                try {
+                    json = Ext.JSON.decode(response.responseText);
+                }catch(e) {
+                    json = {};
+                }
                 if(json.success){
                     me.fireEvent('success', event, item);
                 }else{
                     me.fireEvent('failure', event, item);
                 }
             }
-            return me.fireEvent('uploadend', response.status, event, item);
+            me.clearXhr();
+            return me.fireEvent('afterupload', response.status, event, item);
         }, true);
         xhr.upload.addEventListener("progress", function (event) {
             return me.fireEvent('progresschange', event, item);
         }, true);
 
+        me.fireEvent('beforeupload', formData, item);
         xhr.send(formData);
     },
 
@@ -69,7 +79,7 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
                 });
         if (idx > -1) {
             me.uploadItem(me.getFiles().getAt(idx));
-            me.on('uploadend', me.upload, me, {single: true});
+            me.on('afterupload', me.upload, me, {single: true});
         }
     },
 
@@ -86,5 +96,14 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
      * A placeholder for the abort procedure.
      */
     abortXhr: function () {
+    },
+
+    /**
+     * @protected
+     *
+     * A placeholder for the remove procedure.
+     */
+    clearXhr: function () {
     }
+
 });

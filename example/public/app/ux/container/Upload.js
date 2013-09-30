@@ -7,7 +7,10 @@ Ext.define('Ext.ux.container.Upload', {
     emptyDragZoneMsg: "Upload zone",
     dragZoneOverMsg: "Add {0} file(s) to upload query",
     progressMsg: "{0} files to upload.",
+    notAcceptedMsg : "{0} has not accepted extension or is to big",
+    timeoutMsg : "Request for {0} has exceeded the allowed timeout.",
     processed : 0,
+    listeners : {},
     config: {
         /**
          * @config
@@ -75,6 +78,7 @@ Ext.define('Ext.ux.container.Upload', {
                             btn.setDisabled(true);
                             btn.setVisible(true);
                             abort.setVisible(false);
+                            clear.setVisible(false);
                         },
                         hidden: true
                     }
@@ -144,6 +148,8 @@ Ext.define('Ext.ux.container.Upload', {
             url: me.url,
             directMethod: me.directMethod || '',
             acceptedTypes: me.acceptedTypes,
+            maxFileSize : me.maxFileSize,
+            timeout: me.timeout,
             listeners: {
                 dragover: function (el, count) {
                     el.removeAll();
@@ -180,8 +186,23 @@ Ext.define('Ext.ux.container.Upload', {
         me.updateInfo();
         me.fireEvent('ddinit', me.upload);
         /**
-         * additional listeners to controll buttons
+         * additional listeners to controll upload processes
          */
+        me.upload.getTransport().on('notaccepted', function (file){
+            var tooltip = Ext.create('Ext.tip.ToolTip', {
+                title: 'Warning',
+                target: '',
+                anchor: 'right',
+                html: '',
+                width: 415,
+                autoHide: false,
+                closable: true,
+                closeAction : 'destroy'
+            });
+            tooltip.setTarget(btnUpload.id);
+            tooltip.html = Ext.String.format(me.notAcceptedMsg, file.name);
+            tooltip.show();
+        });
         me.upload.getTransport().on('beforeupload', function () {
             progressBar
                 .getEl()
@@ -237,6 +258,21 @@ Ext.define('Ext.ux.container.Upload', {
                 }
             }
             me.updateInfo();
+        });
+        me.upload.getTransport().on('timeout', function (e, item) {
+            var tooltip = Ext.create('Ext.tip.ToolTip', {
+                title: 'Warning',
+                target: '',
+                anchor: 'right',
+                html: '',
+                width: 415,
+                autoHide: false,
+                closable: true,
+                closeAction : 'destroy'
+            });
+            tooltip.setTarget(btnUpload.id);
+            tooltip.html = Ext.String.format(me.timeoutMsg, item.get('name'));
+            tooltip.show();
         });
     },
     resetDropZone: function (el) {

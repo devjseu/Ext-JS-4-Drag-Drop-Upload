@@ -15,7 +15,6 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
         xhr.open(method, url, true);
 
         this.abortXhr = function () {
-            console.log(xhr);
             xhr && xhr.abort();
         };
         this.clearXhr = function () {
@@ -24,6 +23,10 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
 
         return xhr;
     },
+    /**
+     *
+     * @param item
+     */
     uploadItem: function (item) {
         var me = this,
             file = item.get('file'),
@@ -42,19 +45,18 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
         xhr.setRequestHeader(this.config.sizeHeader, file.size);
         xhr.setRequestHeader(this.config.typeHeader, file.type);
         xhr.addEventListener('loadend', function (event) {
-
             var response = event.target;
             if (response.status != 200) {
                 me.fireEvent('failure', event, item);
             } else {
                 try {
                     json = Ext.JSON.decode(response.responseText);
-                }catch(e) {
+                } catch (e) {
                     json = {};
                 }
-                if(json.success){
+                if (json.success) {
                     me.fireEvent('success', event, item);
-                }else{
+                } else {
                     me.fireEvent('failure', event, item);
                 }
             }
@@ -64,11 +66,16 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
         xhr.upload.addEventListener("progress", function (event) {
             return me.fireEvent('progresschange', event, item);
         }, true);
-
+        xhr.timeout = me.getTimeout();
+        xhr.addEventListener('timeout', function (event) {
+            me.fireEvent('timeout', event, item);
+        });
         me.fireEvent('beforeupload', formData, item);
         xhr.send(formData);
     },
-
+    /**
+     *
+     */
     upload: function () {
         var me = this,
             idx =
@@ -79,7 +86,11 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
                 });
         if (idx > -1) {
             me.uploadItem(me.getFiles().getAt(idx));
-            me.on('afterupload', me.upload, me, {single: true});
+            me.on('afterupload', function (){
+                setTimeout(function () {
+                    me.upload();
+                }, 150);
+            }, me, {single: true});
         }
     },
 

@@ -168,7 +168,17 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
              * Fired whatever file was uploaded or error occurred.
              *
              */
-            'afterupload': true
+            'afterupload': true,
+            /**
+             * @event
+             * @param status
+             * @param event
+             * @param record
+             *
+             * Fired when after request timeout.
+             *
+             */
+            'timeout': true
         });
         me.initConfig(cfg);
         if (typeof me.config.url === 'undefined') {
@@ -240,7 +250,14 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
      * @returns {boolean}
      */
     isAccepted: function (file) {
-        return !!(this.config.acceptedTypes[file.type] && (file.size <= this.config.maxFileSize));
+        var ret = true;
+        if(Ext.Object.getSize(this.config.acceptedTypes) > 0 && !this.config.acceptedTypes[file.type]){
+            ret = false;
+        }
+        if(file.size > this.config.maxFileSize) {
+            ret = false;
+        }
+        return ret;
     },
     /**
      * @private

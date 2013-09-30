@@ -13,7 +13,8 @@ Ext.define('Ext.ux.upload.DD', {
         directMethod: null,
         url: null,
         params : {},
-        acceptedTypes : {}
+        acceptedTypes : {},
+        dropZone : null
     },
     /**
      *
@@ -46,12 +47,6 @@ Ext.define('Ext.ux.upload.DD', {
              */
             'drop': true
         });
-        /**
-         * check if req config exist
-         */
-        if (typeof me.config.dropZone === 'undefined') {
-            throw Error("dropZone missing in configuration object");
-        }
         /**
          * test browser compatibility
          */

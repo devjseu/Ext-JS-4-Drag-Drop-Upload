@@ -70,13 +70,13 @@ Ext.define('MyApp.view.Viewport', {
                     items: [
                         {
                             xtype: 'uploadbox',
-                            url : '/api/json/1.0/jsonrpc.php',
-                            directMethod : 'MyApp.File.upload',
-                            acceptedTypes : {
+                            url: '/api/json/1.0/jsonrpc.php',
+                            directMethod: 'MyApp.File.upload',
+                            acceptedTypes: {
                                 'image/png': true,
                                 'video/avi': true
                             },
-                            autoUpload : false,
+                            autoUpload: false,
                             listeners: {
                                 ddinit: function (dd) {
                                     var el = this,

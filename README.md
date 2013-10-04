@@ -36,7 +36,7 @@ In the most simple case, you can just add the component with some paramters:
 
 ## Confiugration
 
-TODO
+Described on [our](http://devjs.eu/en/ext-js-4-dd-upload/) blog
 
 ## Example
 
@@ -45,7 +45,7 @@ You can find it in `example/` directory or online [here](http://demos.devjs.eu/e
 
 ### Requirements:
 
-  - web server with PHP support
+  - web server with PHP 5.3 support
   - Zend Framework installed
 
 Clone the repository and make the `public` directory accessible through your web server. 

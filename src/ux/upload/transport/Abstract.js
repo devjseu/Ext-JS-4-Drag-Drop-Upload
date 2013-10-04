@@ -6,7 +6,7 @@
  */
 Ext.define('Ext.ux.upload.transport.Abstract', {
     extend: 'Ext.util.Observable',
-    requires: ['Ext.ux.upload.Store', 'Ext.ux.data.Connection'],
+    requires: ['Ext.ux.upload.Store'],
     files: null,
     directParams: {
         extType: 'rpc',
@@ -302,10 +302,10 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
             });
         }
     },
-    onFileSuccess: function (event, item) {
+    onFileSuccess: function (json, event, item) {
         item.set('status', Ext.ux.upload.transport.Abstract.STATUS["success"]);
     },
-    onFileFailure: function (event, item) {
+    onFileFailure: function (json, event, item) {
         if(event.target.status === 0){
             item.set('status', Ext.ux.upload.transport.Abstract.STATUS["abort"]);
         }else{

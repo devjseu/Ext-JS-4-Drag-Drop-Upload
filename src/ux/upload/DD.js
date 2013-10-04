@@ -9,12 +9,12 @@ Ext.define('Ext.ux.upload.DD', {
     extend: 'Ext.util.Observable',
     transport: null,
     config: {
-        id : null,
+        id: null,
         directMethod: null,
         url: null,
-        params : {},
-        acceptedTypes : {},
-        dropZone : null
+        params: {},
+        acceptedTypes: {},
+        dropZone: null
     },
     /**
      *
@@ -68,9 +68,12 @@ Ext.define('Ext.ux.upload.DD', {
     initDragDrop: function () {
         var me = this,
             collection = Ext.create('Ext.util.MixedCollection'),
-            dropZone = me.getDropZone();
+            dropZone = me.getDropZone(),
+            dom = dropZone.getEl().dom,
+            style = '#' + dom.id + ' * { pointer-events: none; }',
+            styleEl = document.createElement('style');
 
-        dropZone.getEl().dom.ondrop = function (e) {
+        dom.ondrop = function (e) {
             e.preventDefault();
             collection = Ext.create('Ext.util.MixedCollection');
             if (Ext.Array.contains(e.dataTransfer.types, "Files")) {
@@ -79,13 +82,24 @@ Ext.define('Ext.ux.upload.DD', {
             me.fireEvent('drop', dropZone);
             return false;
         };
-        dropZone.getEl().dom.ondragenter = function (e) {
+        dom.ondragenter = function (e) {
+            try {
+                if (e.relatedTarget.nodeType == 3) return;
+            } catch (err) {
+            }
+            if (e.target === e.relatedTarget) return;
             if (collection.getCount() === 0) {
-                me.fireEvent('dragover', dropZone, e.dataTransfer.items.length, e.dataTransfer);
+                var len = e.dataTransfer.mozItemCount || e.dataTransfer.items.length;
+                me.fireEvent('dragover', dropZone, len, e.dataTransfer);
             }
             collection.add(e.target);
         };
-        dropZone.getEl().dom.ondragleave = function (e) {
+        dom.ondragleave = function (e) {
+            try {
+                if (e.relatedTarget.nodeType == 3) return;
+            } catch (err) {
+            }
+            if (e.target === e.relatedTarget) return;
             setTimeout(function () {
                 collection.remove(e.target);
                 if (collection.getCount() === 0) {
@@ -93,6 +107,8 @@ Ext.define('Ext.ux.upload.DD', {
                 }
             }, 1);
         }
+        styleEl.innerHTML = style;
+        dom.appendChild(styleEl);
     },
     /**
      *
@@ -132,7 +148,8 @@ Ext.define('Ext.ux.upload.DD', {
     upload: function () {
         this.getTransport().upload();
     },
-    abort : function () {
+    abort: function () {
         this.getTransport().abortUpload();
     }
 });
+

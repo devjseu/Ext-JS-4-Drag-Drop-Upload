@@ -34,7 +34,8 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
             xhr = this.initConnection(),
             json;
 
-        Ext.Object.each(this.config.params, function (key, value) {
+        Ext.Object.each(this.getParams(), function (key, value) {
+            console.log(arguments);
             formData.append(key, value);
         });
         Ext.Object.each(this.directParams, function (key, value) {
@@ -47,7 +48,7 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
         xhr.addEventListener('loadend', function (event) {
             var response = event.target;
             if (response.status != 200) {
-                me.fireEvent('failure', event, item);
+                me.fireEvent('failure', {}, event, item);
             } else {
                 try {
                     json = Ext.JSON.decode(response.responseText);
@@ -55,9 +56,9 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
                     json = {};
                 }
                 if (json.success) {
-                    me.fireEvent('success', event, item);
+                    me.fireEvent('success', json, event, item);
                 } else {
-                    me.fireEvent('failure', event, item);
+                    me.fireEvent('failure', json, event, item);
                 }
             }
             me.clearXhr();
@@ -86,7 +87,10 @@ Ext.define('Ext.ux.upload.transport.Xhr', {
                 });
         if (idx > -1) {
             me.uploadItem(me.getFiles().getAt(idx));
-            me.on('afterupload', function (){
+            me.on('afterupload', function (status){
+                if(status === 0){
+                    return;
+                }
                 setTimeout(function () {
                     me.upload();
                 }, 150);

@@ -79,33 +79,35 @@ Ext.define('Ext.ux.upload.DD', {
             if (Ext.Array.contains(e.dataTransfer.types, "Files")) {
                 me.transport.addFiles(e.dataTransfer.files);
             }
-            me.fireEvent('drop', dropZone);
+            me.fireEvent('drop', dropZone, e.dataTransfer.files);
             return false;
         };
         dom.ondragenter = function (e) {
             try {
-                if (e.relatedTarget.nodeType == 3) return;
+                if (e.relatedTarget.nodeType == 3) return false;
             } catch (err) {
             }
-            if (e.target === e.relatedTarget) return;
+            if (e.target === e.relatedTarget) return false;
             if (collection.getCount() === 0) {
                 var len = e.dataTransfer.mozItemCount || e.dataTransfer.items.length;
-                me.fireEvent('dragover', dropZone, len, e.dataTransfer);
+                me.fireEvent('dragover', dropZone, len, e.dataTransfer, e);
             }
             collection.add(e.target);
+            return false
         };
         dom.ondragleave = function (e) {
             try {
-                if (e.relatedTarget.nodeType == 3) return;
+                if (e.relatedTarget.nodeType == 3) return false;
             } catch (err) {
             }
-            if (e.target === e.relatedTarget) return;
+            if (e.target === e.relatedTarget) return false;
             setTimeout(function () {
                 collection.remove(e.target);
                 if (collection.getCount() === 0) {
                     me.fireEvent('dragout', dropZone);
                 }
             }, 1);
+            return false;
         }
         styleEl.innerHTML = style;
         dom.appendChild(styleEl);

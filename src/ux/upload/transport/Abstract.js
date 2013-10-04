@@ -171,11 +171,10 @@ Ext.define('Ext.ux.upload.transport.Abstract', {
             'afterupload': true,
             /**
              * @event
-             * @param status
              * @param event
              * @param record
              *
-             * Fired when after request timeout.
+             * Fired after request timeout.
              *
              */
             'timeout': true

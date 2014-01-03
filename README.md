@@ -54,3 +54,7 @@ Clone the repository and make the `public` directory accessible through your web
 ## License
 
   - MIT (included in repository)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/devjseu/ext-js-4-drag-drop-upload/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
